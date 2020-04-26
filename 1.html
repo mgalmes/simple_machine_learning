@@ -1,0 +1,83 @@
+  <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+
+<script>
+/*
+Loading color data from json, training the ai and then classifying a color.
+*/
+
+
+let neuralNetwork;
+let inputs = {}
+function setup() {
+  //set of options for the neural network
+  let nnOptions = {
+    dataUrl: 'data/colorData.json', //the file that contains the data
+    inputs: ['r', 'g', 'b'], //input colors red green blue
+    outputs: ['label'], //output label that names the input color
+    task: 'classification', //could be classification, regression or imageClassification
+    debug: true //shows the training graph
+  };
+  console.log("loading neural network....")
+  //create neural network and add data, it will have to load the json file
+  neuralNetwork = ml5.neuralNetwork(nnOptions, modelReady); //modelReady is the callback when json is loaded
+}
+
+function modelReady() {
+    console.log("ready to train data")
+  neuralNetwork.normalizeData(); //force all data to be scaled between 0 and 1
+  /*
+  some theory concepts:
+     During one single epoch the entire dataset is sent through the neural network. This will be
+     repeated for a determined number of epochs, in each one the dataset is sent in different order.
+     Because an epoch is already too big it's divided in batches. Every batch contains a determined number of training
+     examples known as the batch size.
+  */
+  const trainingOptions = {
+    epochs: 20, //number of epochs that will be executed
+    batchSize: 64 //number of training examples of every batch
+  }
+
+  //start training, we pass the options parameter and two event handlers:
+  // whileTraining will be called after every epoch and will receive information parameters
+  // finishedraining will be called when training is done
+  neuralNetwork.train(trainingOptions, whileTraining, finishedTraining);
+}
+
+function whileTraining(epoch, logs) {
+  //epoch gives us the number of the epoch
+  //logs gives us details about the epoch, we will print out the loss
+  console.log(`Epoch: ${epoch} - loss: ${logs.loss.toFixed(2)}`);
+  console.debug(logs) //to be able to see the other details the console must have verbose option enabled
+}
+
+function finishedTraining(anything) {
+  //notify that the training is done
+  console.log('done!');
+}
+
+//so once notified that training finished next step is to test the neural net
+//simply running classify() and writing our colour values
+
+//this function has to be called manually
+function classify() {
+  //creating an object of the colour to be classified using user input
+  inputs = {
+    r: prompt("red level (0-255)",inputs.r),
+    g: prompt("green level (0-255)",inputs.g),
+    b: prompt("blue-level (0-255)",inputs.b)
+  }
+  //call classify using inputs and giving a callback for once it's done
+  neuralNetwork.classify([inputs.r, inputs.g, inputs.b], gotResults);
+}
+
+//function called when finished classifying
+function gotResults(error, results) {
+  //will result the output label of the input colour, or error if sth went wrong
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(`label:${results[0].label}, confidence: ${results[0].confidence.toFixed(2)}`);
+  }
+}
+</script>
+open dev console and run setup() and use classify() to test it!

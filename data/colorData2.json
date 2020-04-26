@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "b": 0,
+      "g": 255,
+      "label": "green-ish",
+      "r": 0,
+      "uid": "EjbbUhVExBSZxtpKfcQ5qzT7jDW2"
+    },
+    {
+      "b": 0,
+      "g": 0,
+      "label": "red-ish",
+      "r": 255,
+      "uid": "fpqsSD6CvNNFQmRp9sJDdI1QJm32"
+    },
+    {
+      "b": 255,
+      "g": 0,
+      "label": "blue-ish",
+      "r": 0,
+      "uid": "fpqsSD6CvNNFQmRp9sJDdI1QJm32"
+    }
+  ]
+}
